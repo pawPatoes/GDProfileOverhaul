@@ -27,6 +27,46 @@
 #include "Geode/utils/general.hpp"
 #include "Geode/utils/web.hpp"
 #include "include/ProfileOverhaulConstant.hpp"
+#include "FriendNotePopup.hpp"
+
+std::pair<std::string, std::string> loadFriendNoteFromFile(int accountId);
+
+static std::string getRankIconForGlobalRank(int globalRank) {
+    if (globalRank <= 0) {
+        return "rankIcon_all_001.png";
+    }
+    if (globalRank == 1) {
+        return "rankIcon_1_001.png";
+    }
+    if (globalRank <= 10) {
+        return "rankIcon_top10_001.png";
+    }
+    if (globalRank <= 50) {
+        return "rankIcon_top50_001.png";
+    }
+    if (globalRank <= 100) {
+        return "rankIcon_top100_001.png";
+    }
+    if (globalRank <= 200) {
+        return "rankIcon_top200_001.png";
+    }
+    if (globalRank <= 500) {
+        return "rankIcon_top500_001.png";
+    }
+    if (globalRank <= 1000) {
+        return "rankIcon_top1000_001.png";
+    }
+    if (globalRank <= 5000) {
+        return "rankIcon_top2500_001.png";
+    }
+    if (globalRank <= 10000) {
+        return "rankIcon_top5000_001.png";
+    }
+    if (globalRank <= 50000) {
+        return "rankIcon_top10000_001.png";
+    }
+    return "rankIcon_all_001.png";
+}
 
 using namespace geode::prelude;
 
@@ -48,6 +88,9 @@ ProfilePopup::~ProfilePopup() {
         }
         if (glm->m_levelCommentDelegate == this) {
             glm->m_levelCommentDelegate = nullptr;
+        }
+        if (glm->m_levelManagerDelegate == this) {
+            glm->m_levelManagerDelegate = nullptr;
         }
         if (glm->m_leaderboardManagerDelegate == this) {
             glm->m_leaderboardManagerDelegate = nullptr;
@@ -94,6 +137,7 @@ bool ProfilePopup::init(int accountId, bool ownProfile) {
     if (glm) {
         glm->m_userInfoDelegate = this;
         glm->m_levelCommentDelegate = this;
+        glm->m_levelManagerDelegate = this;
         glm->m_leaderboardManagerDelegate = this;
         glm->getGJUserInfo(accountId);
         m_commentPage = 0;
@@ -296,7 +340,15 @@ void ProfilePopup::refreshUserInfoUI() {
     auto infoBtn = CCMenuItemSpriteExtra::create(infoSpr, this, menu_selector(ProfilePopup::onInfo));
     if (m_buttonMenu) m_buttonMenu->addChildAtPosition(infoBtn, Anchor::TopRight, {-5.f, -5.f}, {0.5f, 0.5f}, false);
 
-    auto usernameLabel = Button::createWithLabel(m_score->m_userName.c_str(), "bigFont.fnt", [this](geode::Button* sender) {
+    std::string displayName = m_score->m_userName;
+    if (m_score->m_friendReqStatus == 1) {
+        auto [savedNickname, savedNote] = loadFriendNoteFromFile(m_score->m_accountID);
+        if (!savedNickname.empty()) {
+            displayName = "*" + savedNickname;
+        }
+    }
+
+    auto usernameLabel = Button::createWithLabel(displayName.c_str(), "bigFont.fnt", [this](geode::Button* sender) {
         Notification::create("Username Copied to Clipboard", NotificationIcon::Info, 1.5f)->show();
         geode::utils::clipboard::write(m_score->m_userName);
     });
@@ -349,6 +401,16 @@ void ProfilePopup::refreshUserInfoUI() {
                 ->show();
         });
         m_usernameMenu->addChild(modBadge);
+    }
+
+    // friend note
+    if (usernameLabel && m_score->m_friendReqStatus == 1) {
+        // @geode-ignore(unknown-resource)
+        auto friendNoteBtn = Button::createWithNode(EditorButtonSprite::createWithSpriteFrameName("geode.loader/changelog.png", .8f, EditorBaseColor::LightBlue), [this](geode::Button* sender) {
+            // Handle friend request button press
+            FriendNotePopup::create(m_profilePopup, m_score)->show();
+        });
+        m_usernameMenu->addChild(friendNoteBtn);
     }
     m_usernameMenu->updateLayout();
 
@@ -504,17 +566,6 @@ void ProfilePopup::refreshUserInfoUI() {
             newFriendCountLabel->setPosition({newFriendBadge->getContentSize().width / 2.f, newFriendBadge->getContentSize().height / 2.f});
             newFriendBadge->addChild(newFriendCountLabel);
         }
-
-        // @geode-ignore(unknown-resource)
-        auto shareCommentBtn = Button::createWithNode(AccountButtonSprite::createWithSpriteFrameName("geode.loader/message.png"), [this](geode::Button* sender) {
-            if (m_score) {
-                if (auto layer = ShareCommentLayer::create("Post Account Update", 140, CommentType::Account, m_score->m_accountID, "")) {
-                    layer->m_delegate = this;
-                    layer->show();
-                }
-            }
-        });
-        m_userOptionsMenu->addChild(shareCommentBtn);
     }
 
     if ((m_score->m_messageState == 0) || (m_score->m_messageState == 1 && m_score->m_friendReqStatus == 1) || (m_score->isCurrentUser())) {
@@ -647,6 +698,19 @@ void ProfilePopup::refreshUserInfoUI() {
         m_userOptionsMenu->addChild(acceptFriendBtn);
     }
 
+    if (m_score->isCurrentUser() && m_ownProfile) {
+        // @geode-ignore(unknown-resource)
+        auto shareCommentBtn = Button::createWithNode(AccountButtonSprite::createWithSpriteFrameName("geode.loader/message.png"), [this](geode::Button* sender) {
+            if (m_score) {
+                if (auto layer = ShareCommentLayer::create("Post Account Update", 140, CommentType::Account, m_score->m_accountID, "")) {
+                    layer->m_delegate = this;
+                    layer->show();
+                }
+            }
+        });
+        m_userOptionsMenu->addChild(shareCommentBtn);
+    }
+
     m_userOptionsMenu->updateLayout();
 
     // bottom left menu
@@ -746,6 +810,10 @@ void ProfilePopup::refreshUserInfoUI() {
         });
         if (!m_score->isCurrentUser()) starsLeaderboardBtn->setEnabled(false);
         starsLeaderboardBtn->setColor({233, 253, 113});
+        auto starsRankSprite = CCSprite::createWithSpriteFrameName(getRankIconForGlobalRank(m_score->m_globalRank).c_str());
+        starsRankSprite->setPosition({-5, starsLeaderboardBtn->getContentSize().height / 2.f});
+        starsRankSprite->setAnchorPoint({1.f, 0.5f});
+        starsLeaderboardBtn->addChild(starsRankSprite);
         m_leaderboardMenu->addChild(starsLeaderboardBtn);
 
         if (m_score->isCurrentUser() && m_moonsRankLoaded && m_moonsRank > 0) {
@@ -761,6 +829,10 @@ void ProfilePopup::refreshUserInfoUI() {
 
             if (!m_score->isCurrentUser()) moonsLeaderboardBtn->setEnabled(false);
             moonsLeaderboardBtn->setColor({109, 215, 249});
+            auto moonsRankSprite = CCSprite::createWithSpriteFrameName(getRankIconForGlobalRank(m_moonsRank).c_str());
+            moonsRankSprite->setPosition({-5, moonsLeaderboardBtn->getContentSize().height / 2.f});
+            moonsRankSprite->setAnchorPoint({1.f, 0.5f});
+            moonsLeaderboardBtn->addChild(moonsRankSprite);
 
             m_leaderboardMenu->addChild(moonsLeaderboardBtn);
         }
@@ -805,19 +877,28 @@ void ProfilePopup::refreshRatedLevelCell() {
     searchObj->m_searchMode = 0;
     auto key = searchObj->getKey();
     CCArray* levels = nullptr;
+    const bool showLatestLevel = m_score->m_creatorPoints == 0;
+
+    if (key && key[0] && m_ratedLevelSearchKey != key) {
+        m_ratedLevelFetchCompleted = false;
+        m_ratedLevelFetchFailed = false;
+        m_ratedLevelSearchKey = key;
+    }
 
     if (key && key[0]) {
         levels = glm->getStoredOnlineLevels(key);
     }
 
     if (!levels || levels->count() == 0) {
-        glm->getOnlineLevels(searchObj);
-        if (key && key[0]) {
-            levels = glm->getStoredOnlineLevels(key);
+        if (m_ratedLevelSearchKey == key && (m_ratedLevelFetchCompleted || m_ratedLevelFetchFailed)) {
+            showNoRatedLevelLabel(showLatestLevel);
+            return;
         }
-    }
 
-    if (!levels || levels->count() == 0) {
+        if (key && key[0]) {
+            glm->getOnlineLevels(searchObj);
+        }
+
         m_spinner = LoadingSpinner::create(35.f);
         if (m_spinner) {
             m_spinner->setAnchorPoint({0.5f, 0.5f});
@@ -836,7 +917,6 @@ void ProfilePopup::refreshRatedLevelCell() {
     }
 
     GJGameLevel* ratedLevel = nullptr;
-    const bool showLatestLevel = m_score->m_creatorPoints == 0;
     for (int i = 0; i < levels->count(); ++i) {
         auto level = typeinfo_cast<GJGameLevel*>(levels->objectAtIndex(i));
         if (!level) {
@@ -850,16 +930,8 @@ void ProfilePopup::refreshRatedLevelCell() {
         break;
     }
 
-    if (!ratedLevel && !m_noneLabel) {
-        m_noneLabel = CCLabelBMFont::create(showLatestLevel ? "No level found" : "No rated level", "goldFont.fnt");
-        m_noneLabel->setScale(0.5f);
-        m_noneLabel->setAnchorPoint({0.5f, 0.5f});
-        m_noneLabel->setPosition({m_ratedLevelCell->getContentSize().width / 2.f, m_ratedLevelCell->getContentSize().height / 2.f});
-        m_ratedLevelCell->addChild(m_noneLabel);
-        if (m_spinner) {
-            m_spinner->removeFromParent();
-            m_spinner = nullptr;
-        }
+    if (!ratedLevel) {
+        showNoRatedLevelLabel(showLatestLevel);
         return;
     }
 
@@ -882,18 +954,38 @@ void ProfilePopup::refreshRatedLevelCell() {
         auto completedIcon = m_levelCell->m_mainLayer->getChildByID("completed-icon");
         auto copyIndicator = m_levelCell->m_mainLayer->getChildByID("copy-indicator");
         auto highObjIndicator = m_levelCell->m_mainLayer->getChildByID("high-object-indicator");
+        auto percentageLabel = m_levelCell->m_mainLayer->getChildByID("percentage-label");
         if (levelName) levelName->setPositionY(levelName->getPositionY() - 10.f);
         if (songName) songName->setPosition({songName->getPositionX() - 2.f, songName->getPositionY() + 11.f});
-        if (difficultyContainer) difficultyContainer->setScale(difficultyContainer->getScale() - 0.1f);
+        if (difficultyContainer) difficultyContainer->setScale(difficultyContainer->getScale() - 0.2f);
         if (completedIcon) completedIcon->removeFromParent();
         if (copyIndicator) copyIndicator->removeFromParent();
         if (highObjIndicator) highObjIndicator->removeFromParent();
+        if (percentageLabel) percentageLabel->setPositionY(percentageLabel->getPositionY() - 10.f);
     }
     if (m_spinner) {
         m_spinner->removeFromParent();
         m_spinner = nullptr;
     }
     m_ratedLevelCell->addCell(m_levelCell);
+    m_ratedLevelCell->updateLayout();
+}
+
+void ProfilePopup::showNoRatedLevelLabel(bool showLatestLevel) {
+    if (m_spinner) {
+        m_spinner->removeFromParent();
+        m_spinner = nullptr;
+    }
+    if (m_noneLabel) {
+        m_noneLabel->removeFromParent();
+        m_noneLabel = nullptr;
+    }
+
+    m_noneLabel = CCLabelBMFont::create(showLatestLevel ? "No level found" : "No rated level", "goldFont.fnt");
+    m_noneLabel->setScale(0.5f);
+    m_noneLabel->setAnchorPoint({0.5f, 0.5f});
+    m_noneLabel->setPosition({m_ratedLevelCell->getContentSize().width / 2.f, m_ratedLevelCell->getContentSize().height / 2.f});
+    m_ratedLevelCell->addChild(m_noneLabel);
     m_ratedLevelCell->updateLayout();
 }
 
@@ -985,6 +1077,34 @@ void ProfilePopup::loadLeaderboardFailed(char const* key) {
     m_moonsRankLoaded = true;
     m_moonsRank = 0;
     refreshUserInfoUI();
+}
+
+void ProfilePopup::loadLevelsFinished(cocos2d::CCArray* levels, char const* key) {
+    if (!key || key[0] == '\0') {
+        return;
+    }
+
+    if (m_ratedLevelSearchKey != key) {
+        return;
+    }
+
+    m_ratedLevelFetchCompleted = true;
+    m_ratedLevelFetchFailed = false;
+    refreshRatedLevelCell();
+}
+
+void ProfilePopup::loadLevelsFailed(char const* key) {
+    if (!key || key[0] == '\0') {
+        return;
+    }
+
+    if (m_ratedLevelSearchKey != key) {
+        return;
+    }
+
+    m_ratedLevelFetchCompleted = true;
+    m_ratedLevelFetchFailed = true;
+    refreshRatedLevelCell();
 }
 
 // profile page own implemetation

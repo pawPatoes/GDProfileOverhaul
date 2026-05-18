@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Geode/Geode.hpp>
 #include <Geode/utils/web.hpp>
 #include <Geode/binding/ShareCommentDelegate.hpp>
@@ -8,7 +10,7 @@
 
 using namespace geode::prelude;
 
-class ProfilePopup : public geode::Popup, public UserInfoDelegate, public LevelCommentDelegate, public CommentUploadDelegate, public UploadActionDelegate, public UploadPopupDelegate, public ShareCommentDelegate, public LeaderboardManagerDelegate {
+class ProfilePopup : public geode::Popup, public UserInfoDelegate, public LevelCommentDelegate, public CommentUploadDelegate, public UploadActionDelegate, public UploadPopupDelegate, public ShareCommentDelegate, public LevelManagerDelegate, public LeaderboardManagerDelegate {
     friend ProfilePage;
 
 public:
@@ -19,10 +21,13 @@ public:
     void getUserInfoFinished(GJUserScore* score) override;
     void getUserInfoFailed(int id) override;
     void userInfoChanged(GJUserScore* score) override;
+    void refreshUserInfoUI();
     void loadCommentsFinished(cocos2d::CCArray* comments, char const* key) override;
     void loadCommentsFailed(char const* key) override;
     void loadLeaderboardFinished(cocos2d::CCArray* scores, char const* key) override;
     void loadLeaderboardFailed(char const* key) override;
+    void loadLevelsFinished(cocos2d::CCArray* levels, char const* key) override;
+    void loadLevelsFailed(char const* key) override;
     void shareCommentClosed(gd::string text, ShareCommentLayer* layer) override;
 
     bool m_hasSwitched = false;
@@ -59,6 +64,9 @@ private:
     LoadingSpinner* m_spinner = nullptr;
     LevelCell* m_levelCell = nullptr;
     CCLabelBMFont* m_noneLabel = nullptr;
+    bool m_ratedLevelFetchCompleted = false;
+    bool m_ratedLevelFetchFailed = false;
+    gd::string m_ratedLevelSearchKey;
 
     // leaderboard state
     int m_moonsRank = 0;
@@ -72,8 +80,8 @@ private:
     bool m_refreshScheduled = false;
 
     void requestAccountCommentsPage(int page);
-    void refreshUserInfoUI();
     void refreshRatedLevelCell();
+    void showNoRatedLevelLabel(bool showLatestLevel);
     void refreshComments();
     void requestMoonLeaderboardRank();
 

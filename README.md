@@ -8,18 +8,17 @@
 
 **Profile Overhaul** is a mod that <cy>completely overhauls</c> the UI of the profile page.
 
-This is a complete <cg>**recreation**</c> of the profile page and does not **<co>modify the original profile page</c>**.
+![🛠️](frame:GJ_hammerIcon_001.png?scale=0.5) This is a complete <cg>**recreation**</c> of the profile page and does not **<co>modify the original profile page</c>**.
 
-##### <cb>It includes new features that doesn't exist in the original profile page.</c>
+##### ![ℹ️](frame:GJ_infoIcon_001.png?scale=0.5) <cc>This mod includes new features that doesn't exist in the original profile page.</c>
 
 ---
 
 ### New Features
 
 - <cg>**Complete Redesign**</c>: A new design for the profile page, with a more modern and clean look.
-- <cl>**Friend Name Notes**</c>: Add custom notes to your friends' names.
-- <cp>**Profile Bio**</c>: Description of someone's profile, better way to tell multiple accounts apart.
-- **<cy>Rated Level Display</c>**: Displays the rated level of the profile, if they have one.
+- <cl>**Friend Notes and Nicknames**</c>: Add custom notes and nicknames to your friends, to easily tell apart.
+- <cy>**Rated Level/Recent Level Display**</c>: Displays the recent/rated level of the profile. Quickly play their level directly in the profile page.
 
 ---
 

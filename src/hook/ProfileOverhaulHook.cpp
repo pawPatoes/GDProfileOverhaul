@@ -64,14 +64,14 @@ class $modify(FriendsProfilePage) {
 
 class $modify(ProfilePage) {
     void loadPageFromUserInfo(GJUserScore* score) {
-        auto bottomMenu = typeinfo_cast<CCMenu*>(m_mainLayer->getChildByIDRecursive("bottom-menu"));
-        if (bottomMenu) {
+        if (m_buttonMenu) {
             auto profileBtn = Button::createWithNode(AccountButtonSprite::createWithSpriteFrameName("PO-icon-person.png"_spr), [this, score](geode::Button* sender) {
                 profile::onVanillaProfilePage = false;
+                this->onClose(sender);
                 ProfilePopup::create(score->m_accountID, score->isCurrentUser())->show();
             });
-            bottomMenu->addChild(profileBtn);
-            bottomMenu->updateLayout();
+            profileBtn->setPositionY(-45.f);
+            m_buttonMenu->addChild(profileBtn);
         }
         ProfilePage::loadPageFromUserInfo(score);
     }

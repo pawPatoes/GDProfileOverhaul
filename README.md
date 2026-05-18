@@ -8,9 +8,9 @@
 
 **Profile Overhaul** is a mod that <cy>completely overhauls</c> the UI of the profile page.
 
-![🛠️](frame:GJ_hammerIcon_001.png?scale=0.5) This is a complete <cg>**recreation**</c> of the profile page and does not **<co>modify the original profile page</c>**.
+#### ![🛠️](frame:GJ_hammerIcon_001.png?scale=0.5) This is a complete <cg>**recreation**</c> of the profile page and does not **<co>modify the original profile page</c>**.
 
-##### ![ℹ️](frame:GJ_infoIcon_001.png?scale=0.5) <cc>This mod includes new features that doesn't exist in the original profile page.</c>
+#### ![ℹ️](frame:GJ_infoIcon_001.png?scale=0.5) <cc>This mod includes new features that doesn't exist in the original profile page.</c>
 
 ---
 

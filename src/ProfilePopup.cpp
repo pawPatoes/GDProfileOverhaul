@@ -1,4 +1,5 @@
 #include <Geode/Geode.hpp>
+#include <Geode/ui/GeodeUI.hpp>
 #include <Geode/binding/CCSpriteGrayscale.hpp>
 #include <Geode/binding/FLAlertLayer.hpp>
 #include <Geode/binding/FriendRequestPopup.hpp>
@@ -197,7 +198,7 @@ bool ProfilePopup::init(int accountId, bool ownProfile) {
     m_leaderboardMenu->setLayout(ColumnLayout::create()->setCrossAxisOverflow(false)->setAutoScale(true)->setAxisReverse(true)->setCrossAxisAlignment(AxisAlignment::Start)->setCrossAxisLineAlignment(AxisAlignment::Start));
     m_leaderboardMenu->setZOrder(5);
     m_leaderboardMenu->setScale(0.8f);
-    m_mainLayer->addChildAtPosition(m_leaderboardMenu, Anchor::TopRight, {-90.f, -30.f}, {0.5, 0.5}, false);
+    m_mainLayer->addChildAtPosition(m_leaderboardMenu, Anchor::TopRight, {-80.f, -30.f}, {0.5, 0.5}, false);
 
     // center panel
     m_usernameMenu = CCMenu::create();
@@ -743,6 +744,13 @@ void ProfilePopup::refreshUserInfoUI() {
     refreshBtn->setScale(0.6f);
     m_buttonMenu->addChildAtPosition(refreshBtn, Anchor::BottomLeft, {0.f, 0.f});
 
+    // @geode-ignore(unknown-resource)
+    auto modSettingsBtn = Button::createWithNode(AccountButtonSprite::createWithSpriteFrameName("geode.loader/settings.png", 1.f, AccountBaseColor::Purple), [this](geode::Button* sender) {
+        openSettingsPopup(getMod());
+    });
+    modSettingsBtn->setScale(0.6f);
+    m_buttonMenu->addChildAtPosition(modSettingsBtn, Anchor::BottomLeft, {30.f, 0.f});
+
     // middle right menu
     if (m_score->m_youtubeURL.size() > 0) {
         auto youtubeBtn = Button::createWithSpriteFrameName("gj_ytIcon_001.png", [this](geode::Button* sender) {
@@ -1126,6 +1134,10 @@ void ProfilePopup::onInfo(CCObject* sender) {
 
     if (m_score->m_creatorPoints > 0) {
         message += fmt::format("\n<cg>Creator Points:</c> {}", m_score->m_creatorPoints);
+    }
+
+    if (m_score->m_discordUsername.size() > 0) {
+        message += fmt::format("\n<cj>Discord:</c> @{}", std::string(m_score->m_discordUsername));
     }
 
     FLAlertLayer::create(m_score->m_userName.c_str(), std::string(message), "OK")->show();

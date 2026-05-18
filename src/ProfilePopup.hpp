@@ -43,11 +43,15 @@ private:
     cue::ListNode* m_commentsList;
     cue::ListNode* m_ratedLevelCell;
 
+    // comments UI
+    LoadingSpinner* m_commentsSpinner = nullptr;
+    CCLabelBMFont* m_noCommentsLabel = nullptr;
+
     // leaderboard menu
     CCMenu* m_leaderboardMenu;
 
     // right side panel
-    CCMenu* m_refreshMenu;
+    CCMenu* m_swapMenu;
     CCMenu* m_socialsMenu;
     CCMenu* m_onlineMenu;
 
@@ -70,6 +74,7 @@ private:
     void requestAccountCommentsPage(int page);
     void refreshUserInfoUI();
     void refreshRatedLevelCell();
+    void refreshComments();
     void requestMoonLeaderboardRank();
 
     void onList(CCObject* sender);

@@ -1,6 +1,8 @@
 #include <Geode/binding/CommentCell.hpp>
 #include <Geode/binding/FriendsProfilePage.hpp>
+#include <Geode/binding/GJAccountManager.hpp>
 #include <Geode/binding/GJLevelScoreCell.hpp>
+#include <Geode/modify/MenuLayer.hpp>
 #include <Geode/modify/MessagesProfilePage.hpp>
 #include <Geode/modify/FRequestProfilePage.hpp>
 #include <Geode/modify/FriendsProfilePage.hpp>
@@ -22,6 +24,11 @@
 
 using namespace geode::prelude;
 
+class $modify(MenuLayer) {
+    void onMyProfile(CCObject*) {
+        ProfilePopup::create(GJAccountManager::get()->m_accountID, true)->show();
+    }
+};
 class $modify(MessagesProfilePage) {
     void onClose(cocos2d::CCObject* sender) {
         if (!profile::onVanillaProfilePage && m_sentMessages == false) {

@@ -125,12 +125,12 @@ bool ProfilePopup::init(int accountId, bool ownProfile) {
     m_userOptionsMenu->m_bIgnoreAnchorPointForPosition = false;
     m_userOptionsMenu->setLayout(ColumnLayout::create()->setCrossAxisOverflow(false)->setAxisReverse(true));
     m_userOptionsMenu->setZOrder(1);
-    m_mainLayer->addChildAtPosition(m_userOptionsMenu, Anchor::Left, {30.f, 20.f}, {0.5, 0.5}, false);
+    m_mainLayer->addChildAtPosition(m_userOptionsMenu, Anchor::Left, {30.f, 19.f}, {0.5, 0.5}, false);
 
     auto userOptionsMenuBg = NineSlice::create("square02_small.png");
     userOptionsMenuBg->setContentSize(m_userOptionsMenu->getContentSize() + CCSize{5, 5});
     userOptionsMenuBg->setOpacity(100);
-    m_mainLayer->addChildAtPosition(userOptionsMenuBg, Anchor::Left, {30.f, 20.f}, {0.5, 0.5}, false);
+    m_mainLayer->addChildAtPosition(userOptionsMenuBg, Anchor::Left, {30.f, 19.f}, {0.5, 0.5}, false);
 
     m_otherOptionsMenu = CCMenu::create();
     m_otherOptionsMenu->setContentSize({35, 70});
@@ -179,17 +179,17 @@ bool ProfilePopup::init(int accountId, bool ownProfile) {
     m_iconsMenu->setID("icons-menu");
     m_iconsMenu->setZOrder(1);
     m_iconsMenu->setLayout(RowLayout::create()->setAxisAlignment(AxisAlignment::Center)->setGap(10.f)->setCrossAxisOverflow(false)->setAutoScale(true));
-    m_mainLayer->addChildAtPosition(m_iconsMenu, Anchor::Center, {0.f, 69.f}, {0.5, 0.5}, false);
+    m_mainLayer->addChildAtPosition(m_iconsMenu, Anchor::Center, {0.f, 68.f}, {0.5, 0.5}, false);
 
     auto iconsMenuBorder = cue::ListBorder::create(cue::ListBorderStyle::Comments, {325, 40}, ccColor4B{191, 114, 62, 255});
     iconsMenuBorder->m_bIgnoreAnchorPointForPosition = false;
     iconsMenuBorder->setZOrder(2);
-    m_mainLayer->addChildAtPosition(iconsMenuBorder, Anchor::Center, {0.f, 69.f}, {0.5, 0.5}, false);
+    m_mainLayer->addChildAtPosition(iconsMenuBorder, Anchor::Center, {0.f, 68.f}, {0.5, 0.5}, false);
 
     auto iconsMenuBg = CCLayerColor::create({191, 114, 62, 255}, iconsMenuBorder->getContentSize().width, iconsMenuBorder->getContentSize().height);
     iconsMenuBg->m_bIgnoreAnchorPointForPosition = false;
     iconsMenuBg->setZOrder(0);
-    m_mainLayer->addChildAtPosition(iconsMenuBg, Anchor::Center, {0.f, 69.f}, {0.5, 0.5}, false);
+    m_mainLayer->addChildAtPosition(iconsMenuBg, Anchor::Center, {0.f, 68.f}, {0.5, 0.5}, false);
 
     m_commentsList = cue::ListNode::create({325, 85}, {191, 114, 62, 255}, cue::ListBorderStyle::Comments);
     m_commentsList->setID("comments-list");
@@ -198,30 +198,30 @@ bool ProfilePopup::init(int accountId, bool ownProfile) {
     m_commentsList->setAutoUpdate(true);
     m_mainLayer->addChildAtPosition(m_commentsList, Anchor::Center, {0.f, -7.f}, {0.5, 0.5}, false);
 
-    m_ratedLevelCell = cue::ListNode::create({325, 50}, ccColor4B{191, 114, 62, 255}, cue::ListBorderStyle::Comments);
+    m_ratedLevelCell = cue::ListNode::create({325, 70}, ccColor4B{191, 114, 62, 255}, cue::ListBorderStyle::Comments);
     m_ratedLevelCell->setID("rated-level-cell");
     m_ratedLevelCell->setZOrder(2);
     m_ratedLevelCell->getScrollLayer()->m_disableMovement = true;
-    m_mainLayer->addChildAtPosition(m_ratedLevelCell, Anchor::Center, {0.f, -85.f}, {0.5, 0.5}, false);
+    m_mainLayer->addChildAtPosition(m_ratedLevelCell, Anchor::Bottom, {0.f, 50.f}, {0.5, 0.5}, false);
 
     auto levelCellBg = CCLayerColor::create({191, 114, 62, 255}, m_ratedLevelCell->getContentSize().width, m_ratedLevelCell->getContentSize().height);
     levelCellBg->m_bIgnoreAnchorPointForPosition = false;
     levelCellBg->setZOrder(0);
-    m_mainLayer->addChildAtPosition(levelCellBg, Anchor::Center, {0.f, -85.f}, {0.5, 0.5}, false);
+    m_mainLayer->addChildAtPosition(levelCellBg, Anchor::Bottom, {0.f, 50.f}, {0.5, 0.5}, false);
 
     // right side panel
-    m_refreshMenu = CCMenu::create();
-    m_refreshMenu->setContentSize({35, 35});
-    m_refreshMenu->setID("refresh-menu");
-    m_refreshMenu->m_bIgnoreAnchorPointForPosition = false;
-    m_refreshMenu->setLayout(ColumnLayout::create());
-    m_refreshMenu->setZOrder(1);
-    m_mainLayer->addChildAtPosition(m_refreshMenu, Anchor::TopRight, {-30.f, -30.f}, {0.5, 0.5}, false);
+    m_swapMenu = CCMenu::create();
+    m_swapMenu->setContentSize({35, 35});
+    m_swapMenu->setID("swap-menu");
+    m_swapMenu->m_bIgnoreAnchorPointForPosition = false;
+    m_swapMenu->setLayout(ColumnLayout::create());
+    m_swapMenu->setZOrder(1);
+    m_mainLayer->addChildAtPosition(m_swapMenu, Anchor::TopRight, {-30.f, -30.f}, {0.5, 0.5}, false);
 
-    auto refreshMenuBg = NineSlice::create("square02_small.png");
-    refreshMenuBg->setContentSize(m_refreshMenu->getContentSize() + CCSize{5, 5});
-    refreshMenuBg->setOpacity(100);
-    m_mainLayer->addChildAtPosition(refreshMenuBg, Anchor::TopRight, {-30.f, -30.f}, {0.5, 0.5}, false);
+    auto swapMenuBg = NineSlice::create("square02_small.png");
+    swapMenuBg->setContentSize(m_swapMenu->getContentSize() + CCSize{5, 5});
+    swapMenuBg->setOpacity(100);
+    m_mainLayer->addChildAtPosition(swapMenuBg, Anchor::TopRight, {-30.f, -30.f}, {0.5, 0.5}, false);
 
     m_socialsMenu = CCMenu::create();
     m_socialsMenu->setContentSize({35, 135});
@@ -229,12 +229,12 @@ bool ProfilePopup::init(int accountId, bool ownProfile) {
     m_socialsMenu->m_bIgnoreAnchorPointForPosition = false;
     m_socialsMenu->setLayout(ColumnLayout::create()->setCrossAxisOverflow(false)->setAxisReverse(true));
     m_socialsMenu->setZOrder(1);
-    m_mainLayer->addChildAtPosition(m_socialsMenu, Anchor::Right, {-30.f, 20.f}, {0.5, 0.5}, false);
+    m_mainLayer->addChildAtPosition(m_socialsMenu, Anchor::Right, {-30.f, 19.f}, {0.5, 0.5}, false);
 
     auto socialsMenuBg = NineSlice::create("square02_small.png");
     socialsMenuBg->setContentSize(m_socialsMenu->getContentSize() + CCSize{5, 5});
     socialsMenuBg->setOpacity(100);
-    m_mainLayer->addChildAtPosition(socialsMenuBg, Anchor::Right, {-30.f, 20.f}, {0.5, 0.5}, false);
+    m_mainLayer->addChildAtPosition(socialsMenuBg, Anchor::Right, {-30.f, 19.f}, {0.5, 0.5}, false);
 
     m_onlineMenu = CCMenu::create();
     m_onlineMenu->setContentSize({35, 70});
@@ -260,12 +260,12 @@ bool ProfilePopup::init(int accountId, bool ownProfile) {
 void ProfilePopup::refreshUserInfoUI() {
     if (!Ref<ProfilePopup>(this)) return;
 
-    if (!m_usernameMenu || !m_statsMenu || !m_iconsMenu || !m_refreshMenu || !m_userOptionsMenu || !m_onlineMenu || !m_otherOptionsMenu) return;
+    if (!m_usernameMenu || !m_statsMenu || !m_iconsMenu || !m_swapMenu || !m_userOptionsMenu || !m_onlineMenu || !m_otherOptionsMenu) return;
 
     m_usernameMenu->removeAllChildren();
     m_statsMenu->removeAllChildren();
     m_iconsMenu->removeAllChildren();
-    m_refreshMenu->removeAllChildren();
+    m_swapMenu->removeAllChildren();
     m_userOptionsMenu->removeAllChildren();
     m_onlineMenu->removeAllChildren();
     m_otherOptionsMenu->removeAllChildren();
@@ -277,7 +277,7 @@ void ProfilePopup::refreshUserInfoUI() {
         m_usernameMenu->updateLayout();
         m_statsMenu->updateLayout();
         m_iconsMenu->updateLayout();
-        m_refreshMenu->updateLayout();
+        m_swapMenu->updateLayout();
         m_userOptionsMenu->updateLayout();
         m_onlineMenu->updateLayout();
         m_otherOptionsMenu->updateLayout();
@@ -460,8 +460,8 @@ void ProfilePopup::refreshUserInfoUI() {
         profile::onVanillaProfilePage = true;
         ProfilePage::create(m_score->m_accountID, m_ownProfile)->show();
     });
-    m_refreshMenu->addChild(oldProfileBtn);
-    m_refreshMenu->updateLayout();
+    m_swapMenu->addChild(oldProfileBtn);
+    m_swapMenu->updateLayout();
 
     if (m_score->isCurrentUser()) {
         auto accountSettingsBtn = Button::createWithSpriteFrameName("accountBtn_settings_001.png", [this](geode::Button* sender) {
@@ -670,10 +670,12 @@ void ProfilePopup::refreshUserInfoUI() {
     }
 
     // @geode-ignore(unknown-resource)
-    auto refreshBtn = Button::createWithNode(AccountButtonSprite::createWithSpriteFrameName("geode.loader/reload.png"), [this](geode::Button* sender) {
-        refreshUserInfoUI();
+    auto refreshBtn = Button::createWithNode(AccountButtonSprite::createWithSpriteFrameName("geode.loader/reload.png", 1.f, AccountBaseColor::Gray), [this](geode::Button* sender) {
+        this->refreshUserInfoUI();
+        this->refreshComments();
     });
-    m_otherOptionsMenu->addChild(refreshBtn);
+    refreshBtn->setScale(0.6f);
+    m_buttonMenu->addChildAtPosition(refreshBtn, Anchor::BottomRight, {0.f, 0.f});
 
     // middle right menu
     if (m_score->m_youtubeURL.size() > 0) {
@@ -742,20 +744,24 @@ void ProfilePopup::refreshUserInfoUI() {
         });
         if (!m_score->isCurrentUser()) starsLeaderboardBtn->setEnabled(false);
         starsLeaderboardBtn->setColor({233, 253, 113});
-
-        auto moonsLeaderboardBtn = Button::createWithLabel(fmt::format("Moons Rank:\n{}", m_moonsRankLoaded ? m_moonsRank : 0), "chatFont.fnt", [this](geode::Button* sender) {
-            if (!m_score) return;
-            if (!m_score->isCurrentUser()) return;
-            m_score->m_leaderboardStat = LeaderboardStat::Moons;
-            auto scene = CCScene::create();
-            auto layer = LeaderboardsLayer::create(LeaderboardType::Global, m_score->m_leaderboardStat);
-            scene->addChild(layer);
-            CCDirector::sharedDirector()->pushScene(CCTransitionFade::create(0.5f, scene));
-        });
-        if (!m_score->isCurrentUser()) moonsLeaderboardBtn->setEnabled(false);
-        moonsLeaderboardBtn->setColor({109, 215, 249});
         m_leaderboardMenu->addChild(starsLeaderboardBtn);
-        m_leaderboardMenu->addChild(moonsLeaderboardBtn);
+
+        if (m_score->isCurrentUser() && m_moonsRankLoaded && m_moonsRank > 0) {
+            auto moonsLeaderboardBtn = Button::createWithLabel(fmt::format("Moons Rank:\n{}", m_moonsRankLoaded ? m_moonsRank : 0), "chatFont.fnt", [this](geode::Button* sender) {
+                if (!m_score) return;
+                if (!m_score->isCurrentUser()) return;
+                m_score->m_leaderboardStat = LeaderboardStat::Moons;
+                auto scene = CCScene::create();
+                auto layer = LeaderboardsLayer::create(LeaderboardType::Global, m_score->m_leaderboardStat);
+                scene->addChild(layer);
+                CCDirector::sharedDirector()->pushScene(CCTransitionFade::create(0.5f, scene));
+            });
+
+            if (!m_score->isCurrentUser()) moonsLeaderboardBtn->setEnabled(false);
+            moonsLeaderboardBtn->setColor({109, 215, 249});
+
+            m_leaderboardMenu->addChild(moonsLeaderboardBtn);
+        }
     }
     m_leaderboardMenu->updateLayout();
 
@@ -859,7 +865,6 @@ void ProfilePopup::refreshRatedLevelCell() {
         return;
     }
 
-    m_levelCell->m_compactView = true;
     m_levelCell->setContentSize(m_ratedLevelCell->getContentSize());
     m_levelCell->setAnchorPoint({0.5f, 0.5f});
     m_levelCell->loadFromLevel(ratedLevel);
@@ -867,11 +872,23 @@ void ProfilePopup::refreshRatedLevelCell() {
         auto creatorName = m_levelCell->m_mainMenu->getChildByID("creator-name");
         creatorName->removeFromParent();
     }
-    m_ratedLevelCell->addCell(m_levelCell);
+    if (m_levelCell->m_mainLayer) {
+        auto levelName = m_levelCell->m_mainLayer->getChildByID("level-name");
+        auto completedIcon = m_levelCell->m_mainLayer->getChildByID("completed-icon");
+        auto songName = m_levelCell->m_mainLayer->getChildByID("song-name");
+        auto difficultyContainer = m_levelCell->m_mainLayer->getChildByID("difficulty-container");
+        auto copyIndicator = m_levelCell->m_mainLayer->getChildByID("copy-indicator");
+        if (levelName) levelName->setPositionY(levelName->getPositionY() - 10.f);
+        if (completedIcon) completedIcon->removeFromParent();
+        if (songName) songName->setPosition({songName->getPositionX() - 2.f, songName->getPositionY() + 11.f});
+        if (difficultyContainer) difficultyContainer->setScale(difficultyContainer->getScale() - 0.1f);
+        if (copyIndicator) copyIndicator->removeFromParent();
+    }
     if (m_spinner) {
         m_spinner->removeFromParent();
         m_spinner = nullptr;
     }
+    m_ratedLevelCell->addCell(m_levelCell);
     m_ratedLevelCell->updateLayout();
 }
 
@@ -1001,8 +1018,16 @@ void ProfilePopup::loadCommentsFinished(cocos2d::CCArray* comments, char const* 
 
     log::debug("account comments page {} returned {} items", m_commentPage, comments->count());
 
-    if (m_commentPage == 0) {
-        m_commentsList->clear();
+    if (this->m_commentPage == 0) {
+        this->m_commentsList->clear();
+        if (this->m_commentsSpinner) {
+            this->m_commentsSpinner->removeFromParent();
+            this->m_commentsSpinner = nullptr;
+        }
+        if (this->m_noCommentsLabel) {
+            this->m_noCommentsLabel->removeFromParent();
+            this->m_noCommentsLabel = nullptr;
+        }
     }
 
     const auto width = m_commentsList->getListSize().width;
@@ -1047,7 +1072,28 @@ void ProfilePopup::loadCommentsFinished(cocos2d::CCArray* comments, char const* 
         }
     }
 
-    m_commentsList->updateLayout();
+    this->m_commentsList->updateLayout();
+
+    if (comments->count() == 0 && this->m_commentPage == 0) {
+        if (!this->m_noCommentsLabel) {
+            this->m_noCommentsLabel = CCLabelBMFont::create("No Account Posts", "goldFont.fnt");
+            this->m_noCommentsLabel->setScale(0.5f);
+            this->m_noCommentsLabel->setAnchorPoint({0.5f, 0.5f});
+            this->m_noCommentsLabel->setPosition({this->m_commentsList->getContentSize().width / 2.f, this->m_commentsList->getContentSize().height / 2.f});
+            this->m_commentsList->addChild(this->m_noCommentsLabel);
+        }
+        if (this->m_commentsSpinner) {
+            this->m_commentsSpinner->removeFromParent();
+            this->m_commentsSpinner = nullptr;
+        }
+        this->m_commentsList->updateLayout();
+        return;
+    }
+
+    if (this->m_commentsSpinner) {
+        this->m_commentsSpinner->removeFromParent();
+        this->m_commentsSpinner = nullptr;
+    }
 
     if (comments->count() >= static_cast<size_t>(m_commentPageSize)) {
         ++m_commentPage;
@@ -1055,6 +1101,32 @@ void ProfilePopup::loadCommentsFinished(cocos2d::CCArray* comments, char const* 
     } else {
         log::debug("account comments finished after page {}", m_commentPage);
     }
+}
+
+void ProfilePopup::refreshComments() {
+    if (!this->m_commentsList) {
+        return;
+    }
+
+    this->m_commentPage = 0;
+    this->m_commentsList->clear();
+    if (this->m_commentsSpinner) {
+        this->m_commentsSpinner->removeFromParent();
+        this->m_commentsSpinner = nullptr;
+    }
+    if (this->m_noCommentsLabel) {
+        this->m_noCommentsLabel->removeFromParent();
+        this->m_noCommentsLabel = nullptr;
+    }
+
+    this->m_commentsSpinner = LoadingSpinner::create(35.f);
+    if (this->m_commentsSpinner) {
+        this->m_commentsSpinner->setAnchorPoint({0.5f, 0.5f});
+        this->m_commentsSpinner->setPosition({this->m_commentsList->getContentSize().width / 2.f, this->m_commentsList->getContentSize().height / 2.f});
+        this->m_commentsList->addChild(this->m_commentsSpinner);
+    }
+    this->m_commentsList->updateLayout();
+    this->requestAccountCommentsPage(0);
 }
 
 void ProfilePopup::requestAccountCommentsPage(int page) {
@@ -1068,6 +1140,26 @@ void ProfilePopup::requestAccountCommentsPage(int page) {
 
 void ProfilePopup::loadCommentsFailed(char const* key) {
     log::error("account comments load failed for key {}", key ? key : "<null>");
+
+    if (this->m_commentsSpinner) {
+        this->m_commentsSpinner->removeFromParent();
+        this->m_commentsSpinner = nullptr;
+    }
+
+    if (!this->m_commentsList) {
+        return;
+    }
+
+    if (this->m_commentPage == 0) {
+        if (!this->m_noCommentsLabel) {
+            this->m_noCommentsLabel = CCLabelBMFont::create("No Account Posts", "goldFont.fnt");
+            this->m_noCommentsLabel->setScale(0.5f);
+            this->m_noCommentsLabel->setAnchorPoint({0.5f, 0.5f});
+            this->m_noCommentsLabel->setPosition({this->m_commentsList->getContentSize().width / 2.f, this->m_commentsList->getContentSize().height / 2.f});
+            this->m_commentsList->addChild(this->m_noCommentsLabel);
+        }
+        this->m_commentsList->updateLayout();
+    }
 }
 
 void ProfilePopup::shareCommentClosed(gd::string text, ShareCommentLayer* layer) {
@@ -1079,9 +1171,7 @@ void ProfilePopup::shareCommentClosed(gd::string text, ShareCommentLayer* layer)
     // }
 
     log::info("share comment closed, refreshing comment list");
-    m_commentsList->clear();
-    m_commentPage = 0;
-    requestAccountCommentsPage(0);
+    refreshComments();
 }
 
 void ProfilePopup::userInfoChanged(GJUserScore* score) {

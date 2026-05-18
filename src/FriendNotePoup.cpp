@@ -77,7 +77,7 @@ bool FriendNotePopup::init(ProfilePopup* profilePopup, GJUserScore* score) {
 
     if (m_buttonMenu) m_buttonMenu->removeAllChildren();
 
-    std::string title = "Friend Note - " + score->m_userName;
+    std::string title = std::string("Friend Note - ") + score->m_userName.c_str();
     setTitle(title);
 
     addSideArt(m_mainLayer, SideArt::All, SideArtStyle::PopupGold, false);
@@ -112,7 +112,7 @@ bool FriendNotePopup::init(ProfilePopup* profilePopup, GJUserScore* score) {
         auto nickname = m_nickNameInput->getString();
         auto upopup = UploadActionPopup::create(nullptr, "Saving friend note...");
         upopup->show();
-        if (nickname.length() > 20) {
+        if (nickname.size() > 20) {
             upopup->showFailMessage("Nickname cannot be longer than 20 characters.");
             return;
         }

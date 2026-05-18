@@ -746,35 +746,35 @@ void ProfilePopup::refreshUserInfoUI() {
     // middle right menu
     if (m_score->m_youtubeURL.size() > 0) {
         auto youtubeBtn = Button::createWithSpriteFrameName("gj_ytIcon_001.png", [this](geode::Button* sender) {
-            utils::web::openLinkInBrowser(std::string("https://youtube.com/") + m_score->m_youtubeURL);
+            utils::web::openLinkInBrowser(std::string("https://youtube.com/") + m_score->m_youtubeURL.c_str());
         });
         m_socialsMenu->addChild(youtubeBtn);
     }
 
     if (m_score->m_twitterURL.size() > 0) {
         auto twitterBtn = Button::createWithSpriteFrameName("gj_twIcon_001.png", [this](geode::Button* sender) {
-            utils::web::openLinkInBrowser(std::string("https://twitter.com/") + m_score->m_twitterURL);
+            utils::web::openLinkInBrowser(std::string("https://twitter.com/") + m_score->m_twitterURL.c_str());
         });
         m_socialsMenu->addChild(twitterBtn);
     }
 
     if (m_score->m_twitchURL.size() > 0) {
         auto twitchBtn = Button::createWithSpriteFrameName("gj_twitchIcon_001.png", [this](geode::Button* sender) {
-            utils::web::openLinkInBrowser(std::string("https://twitch.tv/") + m_score->m_twitchURL);
+            utils::web::openLinkInBrowser(std::string("https://twitch.tv/") + m_score->m_twitchURL.c_str());
         });
         m_socialsMenu->addChild(twitchBtn);
     }
 
     if (m_score->m_instagramURL.size() > 0) {
         auto instagramBtn = Button::createWithSpriteFrameName("gj_instaIcon_001.png", [this](geode::Button* sender) {
-            utils::web::openLinkInBrowser(std::string("https://instagram.com/") + m_score->m_instagramURL);
+            utils::web::openLinkInBrowser(std::string("https://instagram.com/") + m_score->m_instagramURL.c_str());
         });
         m_socialsMenu->addChild(instagramBtn);
     }
 
     if (m_score->m_tiktokURL.size() > 0) {
         auto tiktokBtn = Button::createWithSpriteFrameName("gj_tiktokIcon_001.png", [this](geode::Button* sender) {
-            utils::web::openLinkInBrowser(std::string("https://tiktok.com/@") + m_score->m_tiktokURL);
+            utils::web::openLinkInBrowser(std::string("https://tiktok.com/@") + m_score->m_tiktokURL.c_str());
         });
         m_socialsMenu->addChild(tiktokBtn);
     }

@@ -80,6 +80,7 @@ private:
     int m_commentPage = 0;
     int m_commentPageSize = 10;
     bool m_refreshScheduled = false;
+    int m_commentRequestId = 0;
 
     void requestAccountCommentsPage(int page);
     void refreshRatedLevelCell();

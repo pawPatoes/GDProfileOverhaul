@@ -8,7 +8,7 @@
 	},
 	"id": "arcticwoof.profile_overhaul",
 	"name": "Profile Overhaul",
-	"version": "v1.0.1",
+	"version": "v1.0.2",
 	"developer": "ArcticWoof",
 	"description": "Changes the entire Profile Page",
 	"dependencies": {
@@ -27,6 +27,12 @@
 			"name": "Show Diamond Stats",
 			"default": false,
 			"description": "Shows the user's diamond stats."
+		},
+		"showModSettingsButton":{
+			"type": "bool",
+			"name": "Show Mod Settings Button",
+			"default": true,
+			"description": "Shows a button on the profile page to quickly access mod settings."
 		}
 	},
 	"tags": ["enhancement","interface","online"],

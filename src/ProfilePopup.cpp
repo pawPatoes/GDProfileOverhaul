@@ -714,7 +714,7 @@ void ProfilePopup::refreshUserInfoUI() {
         auto shareCommentBtn = Button::createWithNode(AccountButtonSprite::createWithSpriteFrameName("geode.loader/message.png"), [this](geode::Button* sender) {
             if (m_score) {
                 if (auto layer = ShareCommentLayer::create("Post Account Update", 140, CommentType::Account, m_score->m_accountID, "")) {
-                    layer->m_delegate = this;
+                    layer->m_delegate = static_cast<ShareCommentDelegate*>(this);
                     layer->show();
                 }
             }
@@ -754,12 +754,14 @@ void ProfilePopup::refreshUserInfoUI() {
     refreshBtn->setScale(0.6f);
     m_buttonMenu->addChildAtPosition(refreshBtn, Anchor::BottomLeft, {0.f, 0.f});
 
-    // @geode-ignore(unknown-resource)
-    auto modSettingsBtn = Button::createWithNode(AccountButtonSprite::createWithSpriteFrameName("geode.loader/settings.png", 1.f, AccountBaseColor::Purple), [this](geode::Button* sender) {
-        openSettingsPopup(getMod());
-    });
-    modSettingsBtn->setScale(0.6f);
-    m_buttonMenu->addChildAtPosition(modSettingsBtn, Anchor::BottomLeft, {30.f, 0.f});
+    if (Mod::get()->getSettingValue<bool>("showModSettingsButton")) {
+        // @geode-ignore(unknown-resource)
+        auto modSettingsBtn = Button::createWithNode(AccountButtonSprite::createWithSpriteFrameName("geode.loader/settings.png", 1.f, AccountBaseColor::Purple), [this](geode::Button* sender) {
+            openSettingsPopup(getMod());
+        });
+        modSettingsBtn->setScale(0.6f);
+        m_buttonMenu->addChildAtPosition(modSettingsBtn, Anchor::BottomRight, {0.f, 0.f});
+    }
 
     // middle right menu
     if (m_score->m_youtubeURL.size() > 0) {
@@ -1024,7 +1026,7 @@ void ProfilePopup::showNoRatedLevelLabel(bool showLatestLevel) {
     m_noneLabel = CCLabelBMFont::create(showLatestLevel ? "No level found" : "No rated level", "goldFont.fnt");
     m_noneLabel->setScale(0.5f);
     m_noneLabel->setAnchorPoint({0.5f, 0.5f});
-    m_noneLabel->setPosition({m_levelCellBorder->getContentSize().width / 2.f, m_levelCellBorder->getContentSize().height / 2.f});
+    m_noneLabel->setPosition({m_levelCellBorder->getContentSize().width, m_levelCellBorder->getContentSize().height});
     if (m_levelContainer)
         m_levelContainer->addChild(m_noneLabel);
     else
@@ -1271,8 +1273,18 @@ void ProfilePopup::loadCommentsFinished(cocos2d::CCArray* comments, char const* 
     }
 
     if (comments->count() >= static_cast<size_t>(m_commentPageSize)) {
+        int nextPage = m_commentPage + 1;
+        int currentRequestId = m_commentRequestId;
+
         ++m_commentPage;
-        requestAccountCommentsPage(m_commentPage);
+
+        if (currentRequestId == m_commentRequestId) {
+            log::debug("auto-requesting account comments page {}", nextPage);
+            requestAccountCommentsPage(nextPage);
+        } else {
+            log::debug("skipping auto-pagination because refresh was triggered");
+            m_commentPage = nextPage - 1;
+        }
     } else {
         log::debug("account comments finished after page {}", m_commentPage);
     }
@@ -1282,6 +1294,8 @@ void ProfilePopup::refreshComments() {
     if (!this->m_commentsList) {
         return;
     }
+
+    ++m_commentRequestId;
 
     this->m_commentPage = 0;
     this->m_commentsList->clear();

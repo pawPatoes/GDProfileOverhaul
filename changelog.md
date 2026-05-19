@@ -1,3 +1,10 @@
+## v1.0.2
+
+- Fixed the comment list not refreshing correctly
+- Fixed the no levels label positioning
+- Tweake the mod settings button position
+- Added **Show Mod Settings Button** setting to toggle the mod settings button on the profile page
+
 ## v1.0.1
 
 - Fixed the artist logo bug (NCS and Chompo) not aligned with the song name

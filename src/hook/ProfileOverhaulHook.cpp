@@ -17,6 +17,7 @@
 #include <Geode/modify/GJMessageCell.hpp>
 #include <Geode/modify/GJLevelScoreCell.hpp>
 #include <Geode/modify/GJUserCell.hpp>
+#include <Geode/modify/InfoLayer.hpp>
 #include <Geode/Geode.hpp>
 #include "../include/ProfileOverhaulConstant.hpp"
 #include "../ProfilePopup.hpp"
@@ -64,16 +65,17 @@ class $modify(FriendsProfilePage) {
 
 class $modify(ProfilePage) {
     void loadPageFromUserInfo(GJUserScore* score) {
-        if (m_buttonMenu) {
+        ProfilePage::loadPageFromUserInfo(score);
+        auto bottomMenu = static_cast<CCMenu*>(this->getChildByIDRecursive("bottom-menu"));
+        if (bottomMenu) {
             auto profileBtn = Button::createWithNode(AccountButtonSprite::createWithSpriteFrameName("PO-icon-person.png"_spr), [this, score](geode::Button* sender) {
                 profile::onVanillaProfilePage = false;
                 this->onClose(sender);
                 ProfilePopup::create(score->m_accountID, score->isCurrentUser())->show();
             });
-            profileBtn->setPositionY(-45.f);
-            m_buttonMenu->addChild(profileBtn);
+            bottomMenu->addChild(profileBtn);
+            bottomMenu->updateLayout();
         }
-        ProfilePage::loadPageFromUserInfo(score);
     }
 };
 
@@ -134,5 +136,13 @@ class $modify(GJLevelScoreCell) {
 class $modify(GJUserCell) {
     void onViewProfile(CCObject* sender) {
         ProfilePopup::create(m_userScore->m_accountID, false)->show();
+    }
+};
+
+class $modify(InfoLayer) {
+    void onMore(CCObject* sender) {
+        if (m_level) ProfilePopup::create(m_level->m_accountID, false)->show();
+        if (m_levelList) ProfilePopup::create(m_levelList->m_accountID, false)->show();
+        if (m_score) ProfilePopup::create(m_score->m_accountID, false)->show();
     }
 };

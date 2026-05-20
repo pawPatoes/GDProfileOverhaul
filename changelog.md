@@ -1,8 +1,17 @@
+## v1.0.3
+
+- Moved all of the profile-related functions to be inlined.
+- Moved the old UI button position
+- Fixed issue where on-going friend request button is hidden when the user has their friend request disabled.
+- Fixed issue where the comment history is hidden on your own profile when you have your comment history disabled.
+- Clicking on the Username on the Info Layer will now open the new profile page instead of the old one.
+- Fixed the clipping issues on the level cell
+
 ## v1.0.2
 
 - Fixed the comment list not refreshing correctly
 - Fixed the no levels label positioning
-- Tweake the mod settings button position
+- Tweaked the mod settings button position
 - Added **Show Mod Settings Button** setting to toggle the mod settings button on the profile page
 
 ## v1.0.1

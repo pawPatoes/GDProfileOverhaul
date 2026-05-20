@@ -30,8 +30,6 @@ public:
     void loadLevelsFailed(char const* key) override;
     void shareCommentClosed(gd::string text, ShareCommentLayer* layer) override;
 
-    bool m_hasSwitched = false;
-
 private:
     GJUserScore* m_score;
     ProfilePopup* m_profilePopup = nullptr;
@@ -87,12 +85,6 @@ private:
     void showNoRatedLevelLabel(bool showLatestLevel);
     void refreshComments();
     void requestMoonLeaderboardRank();
-
-    void onList(CCObject* sender);
-    void onLevel(CCObject* sender);
-
-    void onCommentHistory(CCObject* sender);
-    void onFollowUser(CCObject* sender);
 
 protected:
     void onInfo(CCObject* sender);

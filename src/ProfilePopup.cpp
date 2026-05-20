@@ -18,7 +18,6 @@
 #include <cue/ListBorder.hpp>
 #include <cue/ListNode.hpp>
 #include <cue/PlayerIcon.hpp>
-#include "Geode/c++stl/string.hpp"
 #include "Geode/cocos/layers_scenes_transitions_nodes/CCTransition.h"
 #include "Geode/ui/BasedButtonSprite.hpp"
 #include "Geode/ui/Layout.hpp"
@@ -672,7 +671,7 @@ void ProfilePopup::refreshUserInfoUI() {
         m_userOptionsMenu->addChild(friendBtn);
     }
 
-    if (m_score->m_friendReqStatus == 3 && !m_score->isCurrentUser() && m_score->m_friendStatus == 0) {
+    if ((m_score->m_friendReqStatus == 3 && !m_score->isCurrentUser() && m_score->m_friendStatus == 0) || (m_score->m_friendReqStatus == 3)) {
         auto cancelFriendBtn = Button::createWithSpriteFrameName("accountBtn_pendingRequest_001.png", [this](geode::Button* sender) {
             if (m_score) {
                 GJFriendRequest* friendObj = GameLevelManager::get()->friendRequestFromAccountID(m_score->m_accountID);
@@ -725,10 +724,10 @@ void ProfilePopup::refreshUserInfoUI() {
     m_userOptionsMenu->updateLayout();
 
     // bottom left menu
-    if ((m_score->m_commentHistoryStatus == 0) || (m_score->m_commentHistoryStatus == 1 && m_score->m_friendReqStatus == 1)) {
+    if ((m_score->m_commentHistoryStatus == 0) || (m_score->m_commentHistoryStatus == 1 && m_score->m_friendReqStatus == 1) || (m_score->isCurrentUser())) {
         auto commentHistoryBtn = Button::createWithNode(AccountButtonSprite::createWithSpriteFrameName("particle_206_001.png"), [this](geode::Button* sender) {
             if (m_score) {
-                onCommentHistory(sender);
+                InfoLayer::create(nullptr, m_score, nullptr)->show();
             }
         });
         m_otherOptionsMenu->addChild(commentHistoryBtn);
@@ -740,7 +739,21 @@ void ProfilePopup::refreshUserInfoUI() {
         bool isFollowing = glm ? glm->isFollowingUser(m_score->m_accountID) : false;
         auto followSprite = isFollowing ? AccountButtonSprite::createWithSpriteFrameName("gj_heartOn_001.png", 1.f, AccountBaseColor::Blue) : AccountButtonSprite::createWithSpriteFrameName("gj_heartOff_001.png", 1.f, AccountBaseColor::Gray);
         auto followUserBtn = Button::createWithNode(followSprite, [this](geode::Button* sender) {
-            onFollowUser(sender);
+            if (!m_score) return;
+            if (m_score->isCurrentUser()) {
+                log::error("cannot follow/unfollow yourself");
+                return;
+            }
+            auto glm = GameLevelManager::get();
+            if (!glm) return;
+            // follow/unfollow the user
+            if (glm->isFollowingUser(m_score->m_accountID)) {
+                glm->unfollowUser(m_score->m_accountID);
+            } else {
+                glm->followUser(m_score->m_accountID);
+            }
+
+            refreshUserInfoUI();
         });
         m_otherOptionsMenu->addChild(followUserBtn);
         m_otherOptionsMenu->updateLayout();
@@ -803,12 +816,23 @@ void ProfilePopup::refreshUserInfoUI() {
 
     // bottom right menu
     auto listAccountBtn = Button::createWithSpriteFrameName("accountBtn_myLists_001.png", [this](geode::Button* sender) {
-        onList(sender);
+        if (!m_score) return;
+        GJSearchObject* searchObj = GJSearchObject::create(SearchType::UsersLevels, numToString(m_score->m_accountID));
+        searchObj->m_searchMode = 1;  // 1 = lists, 0 = levels
+        auto scene = CCScene::create();
+        auto levelLayer = LevelBrowserLayer::create(searchObj);
+        scene->addChild(levelLayer);
+        CCDirector::sharedDirector()->pushScene(CCTransitionFade::create(0.5f, scene));
     });
     m_onlineMenu->addChild(listAccountBtn);
 
     auto myLevelBtn = Button::createWithSpriteFrameName("accountBtn_myLevels_001.png", [this](geode::Button* sender) {
-        onLevel(sender);
+        if (!m_score) return;
+        GJSearchObject* searchObj = GJSearchObject::create(SearchType::UsersLevels, numToString(m_score->m_userID));
+        auto scene = CCScene::create();
+        auto levelLayer = LevelBrowserLayer::create(searchObj);
+        scene->addChild(levelLayer);
+        CCDirector::sharedDirector()->pushScene(CCTransitionFade::create(0.5f, scene));
     });
     m_onlineMenu->addChild(myLevelBtn);
 
@@ -1007,8 +1031,30 @@ void ProfilePopup::refreshRatedLevelCell() {
         m_spinner = nullptr;
     }
     if (m_levelCell) {
-        m_levelCell->setPosition({m_levelContainer->getContentSize().width / 2.f, m_levelContainer->getContentSize().height / 2.f});
-        if (m_levelContainer) m_levelContainer->addChild(m_levelCell);
+        auto levelCellClippingNode = CCClippingNode::create();
+        levelCellClippingNode->setAlphaThreshold(0.1f);
+        if (!levelCellClippingNode) {
+            return;
+        }
+
+        auto levelCellStencil = CCSprite::createWithSpriteFrameName("square02b_001.png");
+        if (!levelCellStencil) {
+            return;
+        }
+
+        levelCellStencil->setAnchorPoint({0.5f, 0.5f});
+        levelCellStencil->setPosition({m_levelContainer->getContentSize().width, m_levelContainer->getContentSize().height});
+        levelCellStencil->setScaleX(m_levelContainer->getContentSize().width / levelCellStencil->getContentSize().width);
+        levelCellStencil->setScaleY(m_levelContainer->getContentSize().height / levelCellStencil->getContentSize().height);
+
+        levelCellClippingNode->setStencil(levelCellStencil);
+        levelCellClippingNode->setContentSize(m_levelContainer->getContentSize());
+        levelCellClippingNode->setAnchorPoint({0.5f, 0.5f});
+        levelCellClippingNode->setPosition({m_levelContainer->getContentSize().width / 2.f, m_levelContainer->getContentSize().height / 2.f});
+        m_levelCell->setPosition({levelCellClippingNode->getContentSize().width / 2.f, levelCellClippingNode->getContentSize().height / 2.f});
+        levelCellClippingNode->addChild(m_levelCell);
+
+        if (m_levelContainer) m_levelContainer->addChild(levelCellClippingNode);
     }
     m_levelCellBorder->updateLayout();
 }
@@ -1373,48 +1419,5 @@ void ProfilePopup::userInfoChanged(GJUserScore* score) {
 
     m_score = score;
     log::info("user score changed for account id {}", m_score->m_accountID);
-    refreshUserInfoUI();
-}
-
-void ProfilePopup::onList(CCObject* sender) {
-    if (!m_score) return;
-    GJSearchObject* searchObj = GJSearchObject::create(SearchType::UsersLevels, numToString(m_score->m_accountID));
-    searchObj->m_searchMode = 1;  // 1 = lists, 0 = levels
-    auto scene = CCScene::create();
-    auto levelLayer = LevelBrowserLayer::create(searchObj);
-    scene->addChild(levelLayer);
-    CCDirector::sharedDirector()->pushScene(CCTransitionFade::create(0.5f, scene));
-}
-
-void ProfilePopup::onLevel(CCObject* sender) {
-    if (!m_score) return;
-    GJSearchObject* searchObj = GJSearchObject::create(SearchType::UsersLevels, numToString(m_score->m_userID));
-    auto scene = CCScene::create();
-    auto levelLayer = LevelBrowserLayer::create(searchObj);
-    scene->addChild(levelLayer);
-    CCDirector::sharedDirector()->pushScene(CCTransitionFade::create(0.5f, scene));
-}
-
-void ProfilePopup::onCommentHistory(CCObject* sender) {
-    if (!m_score) return;
-    // show the user comment history
-    InfoLayer::create(nullptr, m_score, nullptr)->show();
-}
-
-void ProfilePopup::onFollowUser(CCObject* sender) {
-    if (!m_score) return;
-    if (m_score->isCurrentUser()) {
-        log::error("cannot follow/unfollow yourself");
-        return;
-    }
-    auto glm = GameLevelManager::get();
-    if (!glm) return;
-    // follow/unfollow the user
-    if (glm->isFollowingUser(m_score->m_accountID)) {
-        glm->unfollowUser(m_score->m_accountID);
-    } else {
-        glm->followUser(m_score->m_accountID);
-    }
-
     refreshUserInfoUI();
 }

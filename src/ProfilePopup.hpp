@@ -7,6 +7,7 @@
 #include <cue/ListBorder.hpp>
 #include <cue/ListNode.hpp>
 #include "Geode/cocos/cocoa/CCObject.h"
+#include "Geode/cocos/layers_scenes_transitions_nodes/CCLayer.h"
 
 using namespace geode::prelude;
 
@@ -85,6 +86,9 @@ private:
     void showNoRatedLevelLabel(bool showLatestLevel);
     void refreshComments();
     void requestMoonLeaderboardRank();
+
+    void showGradientBackground(ccColor3B startColor, ccColor3B endColor);
+    Ref<CCLayerGradient> m_gradient = nullptr;
 
 protected:
     void onInfo(CCObject* sender);

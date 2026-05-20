@@ -71,10 +71,11 @@ class $modify(ProfilePage) {
             auto profileBtn = Button::createWithNode(AccountButtonSprite::createWithSpriteFrameName("PO-icon-person.png"_spr), [this, score](geode::Button* sender) {
                 profile::onVanillaProfilePage = false;
                 this->onClose(sender);
-                ProfilePopup::create(score->m_accountID, score->isCurrentUser())->show();
+                ProfilePopup::create(score->m_accountID, m_ownProfile)->show();
             });
             bottomMenu->addChild(profileBtn);
             bottomMenu->updateLayout();
+            if (!m_ownProfile) profileBtn->setScale(0.75f);
         }
     }
 };

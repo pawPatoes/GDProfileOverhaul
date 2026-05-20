@@ -33,9 +33,15 @@
 			"name": "Show Mod Settings Button",
 			"default": true,
 			"description": "Shows a button on the profile page to quickly access mod settings."
+		},
+		"showGradientBackground": {
+			"type": "bool",
+			"name": "Show Gradient Background",
+			"default": false,
+			"description": "Shows a gradient background on the profile page using the user's profile colors. <co>Work in Progress</co>"
 		}
 	},
-	"tags": ["enhancement","interface","online"],
+	"tags": ["enhancement","interface"],
 	"links": {
 		"source": "https://github.com/DumbCaveSpider/GDProfileOverhaul",
 		"community": "https://discord.gg/gXcppxTNxC",

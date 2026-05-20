@@ -18,7 +18,6 @@
 #include <cue/ListBorder.hpp>
 #include <cue/ListNode.hpp>
 #include <cue/PlayerIcon.hpp>
-#include "Geode/cocos/layers_scenes_transitions_nodes/CCTransition.h"
 #include "Geode/ui/BasedButtonSprite.hpp"
 #include "Geode/ui/Layout.hpp"
 #include "Geode/ui/NineSlice.hpp"
@@ -117,10 +116,7 @@ bool ProfilePopup::init(int accountId, bool ownProfile) {
     // check if is actually your own profile
     if (ownProfile) {
         auto currentUserId = GJAccountManager::get()->m_accountID;
-        if (currentUserId != accountId) {
-            log::debug("ProfilePopup was initialized with ownProfile=true but accountId {} does not match current user id {}", accountId, currentUserId);
-            ownProfile = false;
-        }
+        if (currentUserId != accountId) ownProfile = false;
     }
 
     m_ownProfile = ownProfile;
@@ -860,10 +856,9 @@ void ProfilePopup::refreshUserInfoUI() {
         starsLeaderboardBtn->addChild(starsRankSprite);
         m_leaderboardMenu->addChild(starsLeaderboardBtn);
 
-        if (m_score->isCurrentUser() && m_moonsRankLoaded && m_moonsRank > 0) {
+        if (m_moonsRankLoaded && m_moonsRank > 0) {
             auto moonsLeaderboardBtn = Button::createWithLabel(fmt::format("Moons Rank:\n#{}", m_moonsRankLoaded ? m_moonsRank : 0), "chatFont.fnt", [this](geode::Button* sender) {
                 if (!m_score) return;
-                if (!m_score->isCurrentUser()) return;
                 m_score->m_leaderboardStat = LeaderboardStat::Moons;
                 auto scene = CCScene::create();
                 auto layer = LeaderboardsLayer::create(LeaderboardType::Global, m_score->m_leaderboardStat);
@@ -871,7 +866,6 @@ void ProfilePopup::refreshUserInfoUI() {
                 CCDirector::sharedDirector()->pushScene(CCTransitionFade::create(0.5f, scene));
             });
 
-            if (!m_score->isCurrentUser()) moonsLeaderboardBtn->setEnabled(false);
             moonsLeaderboardBtn->setColor({109, 215, 249});
             auto moonsRankSprite = CCSprite::createWithSpriteFrameName(getRankIconForGlobalRank(m_moonsRank).c_str());
             moonsRankSprite->setPosition({-5, moonsLeaderboardBtn->getContentSize().height / 2.f});
@@ -882,6 +876,8 @@ void ProfilePopup::refreshUserInfoUI() {
         }
     }
     m_leaderboardMenu->updateLayout();
+
+    // if (Mod::get()->getSettingValue<bool>("showGradientBackground")) showGradientBackground(GameManager::get()->colorForIdx(m_score->m_color1), GameManager::get()->colorForIdx(m_score->m_color2));
 
     refreshRatedLevelCell();
 }
@@ -1057,6 +1053,39 @@ void ProfilePopup::refreshRatedLevelCell() {
         if (m_levelContainer) m_levelContainer->addChild(levelCellClippingNode);
     }
     m_levelCellBorder->updateLayout();
+}
+
+void ProfilePopup::showGradientBackground(ccColor3B startColor, ccColor3B endColor) {
+    if (!m_score || !m_mainLayer) {
+        return;
+    }
+
+    auto gameManager = GameManager::get();
+    if (!gameManager) {
+        return;
+    }
+
+    if (m_gradient) {
+        m_gradient->removeFromParent();
+        m_gradient = nullptr;
+    }
+
+    if (m_mainLayer) {
+        auto gradientLayer = CCLayer::create();
+        gradientLayer->setContentSize(m_mainLayer->getContentSize());
+        m_mainLayer->addChild(gradientLayer, 2);
+
+        m_gradient = CCLayerGradient::create();
+        m_gradient->setID("profile-gradient");
+
+        m_gradient->setStartOpacity(255);
+        m_gradient->setEndOpacity(255);
+        m_gradient->setStartColor(startColor);
+        m_gradient->setEndColor(endColor);
+        m_gradient->setContentSize(gradientLayer->getContentSize());
+
+        gradientLayer->addChild(m_gradient);
+    }
 }
 
 void ProfilePopup::showNoRatedLevelLabel(bool showLatestLevel) {

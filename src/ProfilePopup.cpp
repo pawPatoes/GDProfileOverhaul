@@ -388,7 +388,7 @@ void ProfilePopup::refreshUserInfoUI() {
             } else {
                 FLAlertLayer::create(
                     "Elder Moderator",
-                    "<cg>Elder Moderators</c> hold all <co>moderator abilities</c>, with the additional ability to <cr>delete comments</c>, issue temporary <cr>comment bans</c>, remove <cy>unrated user levels</c> from the server<cc>, allow old rated levels to be updated</c> and <cc>whitelist scouted Newgrounds artists</c>.\n"
+                    "<cg>Elder Moderators</c> hold all <co>moderator abilities</c>, with the additional ability to <cr>delete comments</cr>, issue temporary <cr>comment bans</cr>, remove <cy>unrated user levels</cy> from the server, <cc>allow old rated levels to be updated</cc> and <cc>whitelist scouted Newgrounds artists</cc>.\n"
                     "<cg>Elder Moderator</c> comments are highlighted in <cg>dark green</c>",
                     "OK")
                     ->show();

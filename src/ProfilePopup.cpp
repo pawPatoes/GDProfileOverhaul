@@ -395,7 +395,7 @@ void ProfilePopup::refreshUserInfoUI() {
             }
         });
         m_usernameMenu->addChild(modBadge);
-    } else if (m_score->m_modBadge == 3)  // leaderbord moderator
+    } else if (m_score->m_modBadge == 3)  // leaderboard moderator
     {
         auto modBadge = Button::createWithSpriteFrameName("modBadge_03_001.png", [this](geode::Button* sender) {
             FLAlertLayer::create(
